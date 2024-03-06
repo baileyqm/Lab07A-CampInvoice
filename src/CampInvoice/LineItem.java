@@ -34,10 +34,6 @@ public class LineItem {
         this.quantity = quantity;
     }
 
-    public double getCalculatedTotal() {
-        calculateTotal();
-        return calculatedTotal;
-    }
 
     public Product getProduct() {
         return product;

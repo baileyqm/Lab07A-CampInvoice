@@ -4,6 +4,12 @@ public class Product {
     private String name;
     private double unitPrice = 0;
 
+
+    public Product(String name, double unitPrice) {
+        this.name = name;
+        this.unitPrice = unitPrice;
+    }
+
     @Override
     public String toString() {
         return "Product{" +

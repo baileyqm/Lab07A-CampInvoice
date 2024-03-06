@@ -33,11 +33,12 @@ public class InvoiceGenerator extends JFrame {
     JTextField itemPriceFld;
     JButton generateBtn;
     JButton quitBtn;
+    JTextField quantityFld;
 
     JTextArea invoiceArea;
     JScrollPane scroller = new JScrollPane();
+    ArrayList<LineItem> currentLineItems = new ArrayList<>();
 
-    Invoice currentInvoice = new Invoice();
 
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     public InvoiceGenerator(){
@@ -111,18 +112,21 @@ public class InvoiceGenerator extends JFrame {
 
     public void generateAddItemPanelAndControlPanel(){
         AddItemPanelAndControlPnl = new JPanel(new GridLayout(2,1));
-        JPanel addItemPnl = new JPanel(new GridLayout(1,5));
+        JPanel addItemPnl = new JPanel(new GridLayout(1,7));
         itemNameLbl = new JLabel("Item Name: ");
         itemNameLbl.setHorizontalAlignment(SwingConstants.RIGHT);
         itemNameFld = new JTextField(10);
         itemNameFld.setHorizontalAlignment(SwingConstants.LEFT);
         addItemPnl.add(itemNameLbl);
         addItemPnl.add(itemNameFld);
+        JLabel quantityLbl = new JLabel("Quantity:");
+        quantityLbl.setHorizontalAlignment(SwingConstants.RIGHT);
+        addItemPnl.add(quantityLbl);
+        quantityFld = new JTextField(3);
+        addItemPnl.add(quantityFld);
 
         itemPriceLbl = new JLabel("Price $:");
-
         itemPriceFld = new JTextField(4);
-
         addItemPnl.add(itemPriceLbl);
         addItemPnl.add(itemPriceFld);
         itemPriceLbl.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -131,6 +135,15 @@ public class InvoiceGenerator extends JFrame {
         addItemBtn = new JButton("Add Item");
         addItemPnl.add(addItemBtn);
         AddItemPanelAndControlPnl.add(addItemPnl);
+        addItemBtn.addActionListener(e -> {
+            Product tempProduct = new Product(itemNameFld.getText(),Double.valueOf(itemPriceFld.getText()));
+            LineItem tempLineItem = new LineItem(tempProduct, Integer.valueOf(quantityFld.getText()));
+            currentLineItems.add(tempLineItem);
+            itemNameFld.setText("");
+            quantityFld.setText("");
+            itemPriceFld.setText("");
+            JOptionPane.showMessageDialog(invoiceArea,"Item Added");
+        });
 
         JPanel cmdPnl = new JPanel(new GridLayout(1,2));
         generateBtn = new JButton("Generate Invoice");
@@ -140,7 +153,9 @@ public class InvoiceGenerator extends JFrame {
         });
         cmdPnl.add(generateBtn);
         generateBtn.addActionListener(e -> {
-            invoiceArea.setText(currentInvoice.generateInvoice());
+            Invoice currentInvoice = new Invoice(currentLineItems);
+            Customer currentCustomer = new Customer(nameFld.getText(), streetFld.getText(),cityFld.getText(),stateFld.getText(),zipCodeFld.getText());
+            invoiceArea.setText(currentInvoice.generateInvoice(currentCustomer));
         });
         cmdPnl.add(quitBtn);
         AddItemPanelAndControlPnl.add(cmdPnl);
@@ -148,8 +163,10 @@ public class InvoiceGenerator extends JFrame {
 
     public void generateInvoicePnl(){
         invoicePnl = new JPanel();
-        invoiceArea = new JTextArea(50,50);
+        invoiceArea = new JTextArea(50,60);
         scroller.add(invoiceArea);
         invoicePnl.add(invoiceArea);
+        invoiceArea.setFont(new Font("Courier New", Font.PLAIN, 18));
+        invoiceArea.setEditable(false);
         }
     }
